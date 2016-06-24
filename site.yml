@@ -2,7 +2,7 @@
 
 - name: Needed for accelerated mode
   hosts: all
-  sudo: yes
+  become: yes
   roles:
     - { role: geerlingguy.repo-epel }
   tasks:
@@ -10,29 +10,40 @@
     - service: name=iptables state=stopped enabled=no
     - lineinfile: state=present create=yes dest=/etc/sudoers.d/888-dont-requiretty line="Defaults !requiretty" backup=yes
 
+- name: Get SUN JDK
+  hosts: all
+  become: yes
+  roles:
+      - name: get Sun JDK installed
+        role: "williamyeh.oracle-java"
+        java_version: 7
+        java_subversion: 80
+        java_download_from_oracle: true
+        java_install_jce: false
+
 - name: Apply common configuration to all target nodes
   hosts: all
   accelerate: True
-  sudo: yes
+  become: yes
   roles:
     - common
 
 - name: Ambari server
   hosts: ambari
   accelerate: True
-  sudo: yes
+  become: yes
   roles:
     - ambari-server
 
 - name: Ambari agent
   hosts: all
   accelerate: True
-  sudo: yes
+  become: yes
   roles:
     - ambari-agent
 
 - name: run the blueprint
   hosts: ambari
-  sudo: yes
+  become: yes
   roles:
     - blueprint

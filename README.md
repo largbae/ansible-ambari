@@ -43,6 +43,7 @@ Edit the configuration where appropriate. At the very least you must add hosts a
 
 ## get REPO-EPEL from Ansible Galaxy
 ``` sudo ansible-galaxy install geerlingguy.repo-epel```
+``` sudo ansible-galaxy install williamyeh.oracle-java```
 
 ## Deploying
 ```./ansible-playbook site.yml```
