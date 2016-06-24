@@ -9,7 +9,7 @@ Installation
 ------------
 
 First, ensure the machines you are deploying to meet the requirements:
-- Clean installation of RedHat EL or CentOS 6 (please help to extend to other OSes)
+- Clean installation of RedHat EL or CentOS 6 or 7 (please help to extend to other OSes)
 - SSH access with keys & sudo rights
 - Valid hostname which resolves in DNS
 
@@ -40,6 +40,9 @@ Edit the configuration where appropriate. At the very least you must add hosts a
 | hosts      | `ansible_ssh_user=`            | set to the user you can access the machine with. They should have ssh access.                      |
 | hosts      | `ansible_ssh_private_key_file` | path to the ssh private key to access the machines                                                 |
 | group_vars | whatever you like              | the deployment will work without this, but you may want to change passwords, the cluster name, ... |
+
+## get REPO-EPEL from Ansible Galaxy
+``` sudo ansible-galaxy install geerlingguy.repo-epel```
 
 ## Deploying
 ```./ansible-playbook site.yml```
