@@ -12,7 +12,7 @@
     template : src=PushBlueprint.py.j2 dest=/opt/ambari-install/PushBlueprint.py mode=0755
 
   - name : Install python-requests
-    yum : name=python-requests
+    yum : name=python-requests state=latest
 
   - name : Launch blueprint
     shell : /opt/ambari-install/PushBlueprint.py
