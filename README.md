@@ -41,9 +41,8 @@ Edit the configuration where appropriate. At the very least you must add hosts a
 | hosts      | `ansible_ssh_private_key_file` | path to the ssh private key to access the machines                                                 |
 | group_vars | whatever you like              | the deployment will work without this, but you may want to change passwords, the cluster name, ... |
 
-## get REPO-EPEL from Ansible Galaxy
-``` sudo ansible-galaxy install geerlingguy.repo-epel```
+## Get java role from Ansible Galaxy
 ``` sudo ansible-galaxy install williamyeh.oracle-java```
 
 ## Deploying
-```./ansible-playbook site.yml```
+```ansible-playbook site.yml```
