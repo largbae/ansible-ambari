@@ -1,20 +1,18 @@
 [ambari]
-c6401.ambari.apache.org
+ctest1
 
 [master1]
-c6402.ambari.apache.org
+ctest2
 
 [master2]
-c6403.ambari.apache.org
+ctest3
 
 [slaves]
-c6404.ambari.apache.org
-c6405.ambari.apache.org
-c6406.ambari.apache.org
-c6407.ambari.apache.org
+ctest4
+ctest5
 
 [all:vars]
-ansible_ssh_user=janecobb
+ansible_ssh_user=centos
 ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 
