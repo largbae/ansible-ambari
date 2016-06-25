@@ -1,6 +1,7 @@
 ---
 
-java_home: /etc/alternatives/java_sdk
+# only true for RHEL
+java_home: /usr/java/default/
 
 # paramaters passed to the various ambari roles
 ambari:
