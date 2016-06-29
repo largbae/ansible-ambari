@@ -8,28 +8,50 @@
     login_username: "{{ lookup('env','OS_USERNAME') }}"
     login_password: "{{ lookup('env','OS_PASSWORD') }}"
     login_tenant_name: "{{ lookup('env','OS_TENANT_NAME') }}"
-    #login_tenant_name: "VTS000009"
     image_id: "7a7af5bf-a86b-4b9e-8ad5-c4e4b1381991"
-    availability_zone: "us-west-3a"
+    host_availability_zone: "us-west-3a"
+    vol_availability_zone: "nova"
     key_name: "cona_admin"
-    host_name: "A0CBUS034XHD00"
     private_net: "cona-network1"
-    flavor_ram: "32"
+    hosts:
+      - "a0cbscxhd03"
   tasks:
+   - name: Create Volumes
+     os_volume:
+      size: 512
+      volume_type: "volumes_hdd"
+      state: present
+      availability_zone: "{{ vol_availability_zone }}"
+      timeout: 500
+      display_name: "{{ item[0] }}_v{{ item[1] }}"
+     with_nested:
+       - "{{ hosts }}"
+       - [ 1, 2, 3 ]
    - name: Install
      os_server:
       auth:
         auth_url: "{{ auth_url }}"
-      security_groups: "default"
       state: present
-      availability_zone: "{{ availability_zone }}"
-      name: "{{ host_name }}"
+      availability_zone: "{{ host_availability_zone }}"
+      name: "{{ item }}"
       image: "{{ image_id }}"
       key_name: "{{ key_name }}"
       timeout: 500
       nics:
         - net-name: "{{ private_net }}"
-      flavor_ram: "{{ flavor_ram }}"
+      flavor: "m3.2xlarge"
+      # assign a floating(public) IP?
+      auto_ip: "yes"
+      security_groups:
+        - "default"
+        - "Allow SSH"
+      terminate_volume: "no"
       meta:
-        hostname: "{{ host_name }}"
-        group: hadoop
+        hostname: "{{ item }}"
+        group: "hadoop"
+      volumes:
+        - "{{ item }}_v1"
+        - "{{ item }}_v2"
+        - "{{ item }}_v3"
+     with_items: "{{ hosts }}"
+

@@ -25,4 +25,4 @@ master2
 slaves
 
 [all:vars]
-ansible_ssh_user=vagrant
+ansible_ssh_user=cloud-user
