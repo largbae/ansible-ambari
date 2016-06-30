@@ -14,7 +14,23 @@
     key_name: "cona_admin"
     private_net: "cona-network1"
     hosts:
-      - "a0cbscxhd03"
+      - "vlphdc00"
+      - "vlphdc01"
+      - "vlphdc02"
+      - "vlphdc03"
+      - "vlphdc04"
+      - "vlphdc05"
+      - "vlphdc06"
+      - "vlphdc07"
+      - "vlphdc08"
+      - "vlphdc09"
+      - "vlphdc10"
+      - "vlphdc11"
+      - "vlphdc12"
+      - "vlphdc13"
+      - "vlphdc14"
+      - "vlphdc15"
+      - "vlphdc16"
   tasks:
    - name: Create Volumes
      os_volume:
@@ -54,4 +70,16 @@
         - "{{ item }}_v2"
         - "{{ item }}_v3"
      with_items: "{{ hosts }}"
+
+- name: Add Virtustream Yum repos
+  hosts: "{{ hosts }}"
+  become: yes
+  roles:
+    - virtustream
+
+- name: Create disks
+  hosts: "{{ hosts }}"
+  become: yes
+  roles:
+    - datavol
 

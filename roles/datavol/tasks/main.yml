@@ -1,0 +1,45 @@
+---
+  - name: installing lvm packages
+    yum:
+      name:
+        - system-storage-manager
+        - lvm2
+        - sg3_utils
+      state: present
+    when: config_lvm and ansible_os_family == "RedHat"
+
+  #- name: installing sg3_utils
+    #yum: name=lvm2 state=present
+    #when: config_lvm and ansible_os_family == "RedHat"
+    #
+  #- name: installing sg3_utils
+    #yum: name=sg3_utils state=present
+    #when: config_lvm and ansible_os_family == "RedHat"
+    
+  - name: rescanning for new disks
+    command: /usr/bin/rescan-scsi-bus.sh
+    when: config_lvm and ansible_os_family == "RedHat"
+
+  - name: creating new LVM volume group
+    lvg:
+      vg: "{{ create_vgname }}"
+      pvs: "/dev/vdb,/dev/vdc,/dev/vdd"
+      state: present
+    when: create
+
+  - name: creating new LVM logical volume
+    lvol:
+      vg: "{{ create_vgname }}"
+      lv: "{{ create_lvname }}"
+      size: "{{ create_lvsize }}"
+      # 3 stripes, 256 KB per stripe
+      opts: " -i3 -I256 "
+    when: create
+
+  - name: creating new filesystem on new LVM logical volume
+    filesystem: fstype={{ filesystem }} dev=/dev/{{ create_vgname }}/{{ create_lvname }}
+    when: create
+
+  - name: mounting new filesystem
+    mount: name={{ new_mntp }} src=/dev/{{ create_vgname }}/{{ create_lvname }} fstype={{ filesystem }} state=mounted
+    when: create

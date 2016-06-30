@@ -1,0 +1,14 @@
+---
+  - name: Setup Virtustream hosts entry
+    lineinfile:
+      dest: "/etc/hosts"
+      line: "204.197.208.58          a06nus014cds001.usp01.xstream360.cloud a06nus014cds001.xstream360.cloud a06nus014cds001"
+
+  - name: copy VS root package
+    copy:
+      src: "../files/RHEL7-RHUI-NA-XSTREAM_20150624-2.0-1.noarch.rpm"
+      dest: "/var/tmp/RHEL7-RHUI-NA-XSTREAM_20150624-2.0-1.noarch.rpm"
+
+  - name: install VS root package
+    yum:
+      name: "/var/tmp/RHEL7-RHUI-NA-XSTREAM_20150624-2.0-1.noarch.rpm"

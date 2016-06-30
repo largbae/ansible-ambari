@@ -1,0 +1,9 @@
+# host lists
+[all:children]
+ambari
+master1
+master2
+slaves
+
+[all:vars]
+ansible_ssh_user=cloud-user
