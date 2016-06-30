@@ -139,6 +139,8 @@ def get_host_groups_from_cloud(inventory):
                 inventory.extra_config['fail_on_errors']
     else:
         use_hostnames = False
+    # TODO - add config and drop this force
+    use_hostnames = True
 
     for server in inventory.list_hosts(**list_args):
 
@@ -223,7 +225,9 @@ def main():
             inventory_args.update(dict(
                 config_key='ansible',
                 config_defaults={
-                    'use_hostnames': False,
+                    # forcing to True TODO fix this with config
+                    #'use_hostnames': False,
+                    'use_hostnames': True,
                     'expand_hostvars': True,
                     'fail_on_errors': True,
                 }

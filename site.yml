@@ -2,7 +2,7 @@
 
 # Looks like there are two ways to install ambari. EPEL or manual repo
 #- name: Needed for accelerated mode
-#  hosts: all
+#  hosts: hadoop
 #  become: yes
 #  roles:
 #    - { role: geerlingguy.repo-epel }
@@ -12,7 +12,7 @@
 #    - lineinfile: state=present create=yes dest=/etc/sudoers.d/888-dont-requiretty line="Defaults !requiretty" backup=yes
 
 - name: Get Sun JDK
-  hosts: a0cbscxhd02
+  hosts: hadoop
   become: yes
   roles:
     - name: get Sun JDK installed
@@ -24,13 +24,13 @@
       java_set_javahome: true
 
 - name: Apply common configuration to all target nodes
-  hosts: a0cbscxhd02
+  hosts: hadoop
   become: yes
   roles:
     - common
 
 #- name: Ambari repo
-  #hosts: all
+  #hosts: hadoop
   #become: yes
   #roles:
     #- ambari-repo
@@ -42,7 +42,7 @@
     #- ambari-server
 
 #- name: Ambari agent
-  #hosts: all
+  #hosts: hadoop
   #become: yes
   #roles:
     #- ambari-agent

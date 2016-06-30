@@ -5,24 +5,27 @@
     - 127.0.0.1
   vars:
     #auth_url: "{{ lookup('env','OS_AUTH_URL') }}"
+    # TODO - anti-affinity group must be created manually before running this using "openstack server group create --policy anti-affinity hadoop"
+    #hadoop_group_id: "4ad92ce9-7de8-4e9e-b158-23019cb0efc8"
+    hadoop_group_id: "a0c23d14-6055-4325-a9ec-8c7342b67e2b"
     host_list:
-      #- "vlphdc00"
-      #- "vlphdc01"
+      - "vlphdc00"
+      - "vlphdc01"
       - "vlphdc02"
       - "vlphdc03"
-      #- "vlphdc04"
-      #- "vlphdc05"
-      #- "vlphdc06"
-      #- "vlphdc07"
-      #- "vlphdc08"
-      #- "vlphdc09"
-      #- "vlphdc10"
-      #- "vlphdc11"
-      #- "vlphdc12"
-      #- "vlphdc13"
-      #- "vlphdc14"
-      #- "vlphdc15"
-      #- "vlphdc16"
+      - "vlphdc04"
+      - "vlphdc05"
+      - "vlphdc06"
+      - "vlphdc07"
+      - "vlphdc08"
+      - "vlphdc09"
+      - "vlphdc10"
+      - "vlphdc11"
+      - "vlphdc12"
+      - "vlphdc13"
+      - "vlphdc14"
+      - "vlphdc15"
+      - "vlphdc16"
     image_id: "7a7af5bf-a86b-4b9e-8ad5-c4e4b1381991"
     host_availability_zone: "us-west-3a"
     vol_availability_zone: "nova"
@@ -40,7 +43,7 @@
      with_nested:
        - "{{ host_list }}"
        - [ 1, 2, 3 ]
-   - name: Install
+   - name: Create VMs
      os_server:
       #auth:
         #auth_url: "{{ auth_url }}"
@@ -52,13 +55,14 @@
       timeout: 500
       nics:
         - net-name: "{{ private_net }}"
-      flavor: "m3.2xlarge"
-      # assign a floating(public) IP?
-      auto_ip: "no"
+      # TODO/HACK use a smaller instance flavor and assign a floating(public) IP to the first host only
+      flavor: "{% if item.endswith('00') %}m3.medium{% else %}m3.2xlarge{% endif %}"
+      auto_ip: "{% if item.endswith('00') %}yes{% else %}no{% endif %}"
       security_groups:
         - "default"
         - "Allow SSH"
       terminate_volume: "no"
+      scheduler_hints: "group={{ hadoop_group_id }}"
       meta:
         hostname: "{{ item }}"
         group: "hadoop"
@@ -69,7 +73,7 @@
      with_items: "{{ host_list }}"
 
 - name: Add Virtustream Yum repos
-  hosts: all
+  hosts: hadoop
   become: yes
   roles:
     - virtustream
@@ -77,7 +81,7 @@
 - name: Set Hostname
   vars:
     domain_name: "cokeonena.com"
-  hosts: all
+  hosts: hadoop
   become: yes
   roles:
     - role: ansible-fqdn
@@ -85,7 +89,7 @@
       hostname: "{{ ansible_hostname }}"
 
 - name: Create disks
-  hosts: all
+  hosts: hadoop
   become: yes
   roles:
     - datavol

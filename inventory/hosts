@@ -39,3 +39,9 @@ ambari
 master1
 master2
 slaves
+
+[hadoop:children]
+ambari
+master1
+master2
+slaves
