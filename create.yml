@@ -4,33 +4,30 @@
   hosts:
     - 127.0.0.1
   vars:
-    auth_url: "{{ lookup('env','OS_AUTH_URL') }}"
-    login_username: "{{ lookup('env','OS_USERNAME') }}"
-    login_password: "{{ lookup('env','OS_PASSWORD') }}"
-    login_tenant_name: "{{ lookup('env','OS_TENANT_NAME') }}"
+    #auth_url: "{{ lookup('env','OS_AUTH_URL') }}"
+    host_list:
+      #- "vlphdc00"
+      #- "vlphdc01"
+      - "vlphdc02"
+      - "vlphdc03"
+      #- "vlphdc04"
+      #- "vlphdc05"
+      #- "vlphdc06"
+      #- "vlphdc07"
+      #- "vlphdc08"
+      #- "vlphdc09"
+      #- "vlphdc10"
+      #- "vlphdc11"
+      #- "vlphdc12"
+      #- "vlphdc13"
+      #- "vlphdc14"
+      #- "vlphdc15"
+      #- "vlphdc16"
     image_id: "7a7af5bf-a86b-4b9e-8ad5-c4e4b1381991"
     host_availability_zone: "us-west-3a"
     vol_availability_zone: "nova"
-    key_name: "cona_admin"
     private_net: "cona-network1"
-    hosts:
-      - "vlphdc00"
-      - "vlphdc01"
-      - "vlphdc02"
-      - "vlphdc03"
-      - "vlphdc04"
-      - "vlphdc05"
-      - "vlphdc06"
-      - "vlphdc07"
-      - "vlphdc08"
-      - "vlphdc09"
-      - "vlphdc10"
-      - "vlphdc11"
-      - "vlphdc12"
-      - "vlphdc13"
-      - "vlphdc14"
-      - "vlphdc15"
-      - "vlphdc16"
+    key_name: "cona_admin"
   tasks:
    - name: Create Volumes
      os_volume:
@@ -41,12 +38,12 @@
       timeout: 500
       display_name: "{{ item[0] }}_v{{ item[1] }}"
      with_nested:
-       - "{{ hosts }}"
+       - "{{ host_list }}"
        - [ 1, 2, 3 ]
    - name: Install
      os_server:
-      auth:
-        auth_url: "{{ auth_url }}"
+      #auth:
+        #auth_url: "{{ auth_url }}"
       state: present
       availability_zone: "{{ host_availability_zone }}"
       name: "{{ item }}"
@@ -57,7 +54,7 @@
         - net-name: "{{ private_net }}"
       flavor: "m3.2xlarge"
       # assign a floating(public) IP?
-      auto_ip: "yes"
+      auto_ip: "no"
       security_groups:
         - "default"
         - "Allow SSH"
@@ -69,17 +66,26 @@
         - "{{ item }}_v1"
         - "{{ item }}_v2"
         - "{{ item }}_v3"
-     with_items: "{{ hosts }}"
+     with_items: "{{ host_list }}"
 
 - name: Add Virtustream Yum repos
-  hosts: "{{ hosts }}"
+  hosts: all
   become: yes
   roles:
     - virtustream
 
+- name: Set Hostname
+  vars:
+    domain_name: "cokeonena.com"
+  hosts: all
+  become: yes
+  roles:
+    - role: ansible-fqdn
+      fqdn: "{{ ansible_hostname }}.{{ domain_name }}"
+      hostname: "{{ ansible_hostname }}"
+
 - name: Create disks
-  hosts: "{{ hosts }}"
+  hosts: all
   become: yes
   roles:
     - datavol
-
