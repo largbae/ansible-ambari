@@ -26,6 +26,9 @@
   - name: Ensure ntpd is running and enabled
     service: name=ntpd state=started enabled=yes
 
+  - name: Set hostname
+    template : src=hostname dest=/etc/hostname
+
   - name: Set java path for all users
     template : src=java.sh.j2 dest=/etc/profile.d/java.sh
 
@@ -64,9 +67,15 @@
   # Inspired from http://xmeblog.blogspot.com/2013/06/ansible-dynamicaly-update-etchosts.html
 
   - name: "Build hosts file"
-    lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
+    lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}} {{item}}.{{domain_name}}" state=present
     when: hostvars[item].ansible_default_ipv4.address is defined
     with_items: groups['all']
+
+  - name: "SSH nologin"
+    lineinfile: dest=/root/.ssh/authorized_keys regexp=".*echo.*cloud-user.*" state=absent
+
+  - name: "SSH privs"
+    lineinfile: dest=/root/.ssh/authorized_keys line="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDiP7ytECQKsAhHUjPUGjPxwtDPmNbhZMqfxUXAv44IDMSD++Ev499Gzh8V5zMEuprm18PqnuE4xsPxRWpisu++IzL/mFrAHoSBp4NfhCLjB2M1N+z5FARDrti/ddlSAW5sUdhcd4fgVTGvstquzqsKtt9jx9ytV6Jupw1RXbCQ78hea9fZj+P+4Cz8WXHgqgCVOj24CPuBbuWikILCcT+5VtNRBWjxUq7ketVPVDQAW/TpaWK6xgAhldvfPHo00ryXLuHLUX+ZVnk55qRdBjnLb+IqXbplaItcx4Ihy9HHLGHwRQYTHGEoO7FozzcRCn84ewYkjcRwMEQCTYCZQTIP braden@braden-VirtualBox" state=present
 
   #- name: Disable transparent hugepage
     #shell: echo 'for i in /sys/kernel/mm/*transparent_hugepage/enabled; do echo never > $i; done' >> /etc/rc.local

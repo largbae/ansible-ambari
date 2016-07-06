@@ -9,6 +9,8 @@ create_lvname: 'data-lv'                               # set to logical volume n
 create_lvsize: '100%FREE'                               # set to logical volume size to create --- (10G) - would create new lvm with 10Gigabytes -- (512) - would create new lvm with 512m
 filesystem: 'ext4'                                      # set to filesystem type to format new logical volume with ( ext3, ext4, xfs, etc. )
 
+domain_name: "cokeonena.com"
+
 # only true for RHEL
 java_home: /usr/java/default/
 
